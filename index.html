@@ -95,6 +95,68 @@ textarea{width:100%;min-height:120px;font:inherit;padding:10px 12px;border:1px s
 .lightbox img{max-width:100%;max-height:100%;border-radius:6px;background:#fff}
 @media (max-width:520px){h1{font-size:1.9rem}.score{font-size:2.6rem}}
 @media (prefers-reduced-motion:reduce){.fill{transition:none}}
+.navbar{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.subnav{justify-content:center}
+.mapwrap summary{cursor:pointer;font:500 .78rem var(--mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.dots{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;max-height:132px;overflow-y:auto}
+.dot{min-width:30px;height:30px;padding:0 6px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:500 .75rem var(--mono);cursor:pointer}
+.dot.answered{background:var(--info-soft);border-color:var(--ink)}
+.dot.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.dot.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.dot.skipped{border-style:dashed;border-color:var(--accent)}
+.dot.cur{outline:2px solid var(--accent);outline-offset:1px}
+.resume{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;border-color:var(--accent)}
+.confirm{border-color:var(--accent)}
+.btn:disabled{opacity:.4}
+
+/* ---- base reset (page also runs standalone, e.g. GitHub Pages) ---- */
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+/* ---- readability & polish ---- */
+:root{--muted:#4A5670;--line:#CBD3E0;--shadow:0 1px 2px rgba(20,32,58,.06),0 4px 14px rgba(20,32,58,.06)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--muted:#B3BFD4;--line:#33415F;--shadow:none}}
+:root[data-theme="dark"]{--muted:#B3BFD4;--line:#33415F;--shadow:none}
+.wrap{gap:22px}
+header{display:flex;flex-direction:column;gap:6px}
+h1{font-size:2.6rem}
+.lede{font-size:1rem;color:var(--muted)}
+.panel{box-shadow:var(--shadow);padding:20px 22px;border-radius:12px}
+.label{font-size:.78rem;color:var(--muted);font-weight:600}
+.pill{font-size:.92rem;padding:8px 14px}
+.chip span{font-size:.95rem}
+.chip small{font-size:.78rem;color:var(--muted)}
+.bar{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow)}
+.meta{font-size:.85rem;color:var(--ink)}
+.track{height:8px;border-radius:4px}
+.qcard{gap:18px;padding:24px}
+.qtext{font-size:1.22rem;line-height:1.5;font-weight:600;color:var(--ink)}
+.tag{font-size:.74rem;padding:4px 9px}
+figure{max-width:100%;background:#fff}
+figure img{max-height:440px;object-fit:contain;background:#fff}
+figcaption{font-size:.8rem;color:#3c4458}
+.opts{gap:10px}
+.opt{padding:14px 16px;font-size:1.02rem;line-height:1.45;border-width:1.5px;border-radius:10px;align-items:center}
+.opt .k{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:6px;background:var(--info-soft);color:var(--ink);font-size:.85rem;padding:0}
+.opt[aria-pressed="true"] .k{background:var(--accent);color:var(--accent-ink)}
+.opt.right .k{background:var(--ok);color:#fff}
+.opt.wrong .k{background:var(--bad);color:#fff}
+.opt:hover:not(:disabled){background:var(--accent-soft)}
+.numrow input{font-size:1.1rem;padding:12px 14px}
+textarea{font-size:1rem;min-height:140px}
+.verdict{font-size:1.35rem}
+.exp{font-size:1rem;line-height:1.65;background:var(--info-soft);border-left-width:4px;border-radius:0 8px 8px 0;padding:12px 16px}
+.exp ul{padding-left:22px}
+.btn{font-size:1rem;padding:12px 20px;border-radius:10px}
+.navbar{padding-top:4px}
+.subnav .pill{font-size:.85rem}
+.dot{min-width:34px;height:34px;font-size:.8rem}
+.ritem{background:var(--panel);box-shadow:var(--shadow);padding:16px 18px}
+.ritem .ua,.ritem .ca{font-size:.92rem}
+.hint{font-size:.85rem;color:var(--muted)}
+.lightbox{background:rgba(5,10,20,.9)}
+@media (max-width:520px){.qcard{padding:18px}.qtext{font-size:1.1rem}.panel{padding:16px}figure img{max-height:300px}}
 </style>
 </head>
 <body>
@@ -125,140 +187,6 @@ const Gc=6.67430e-11, ME=5.972e24, RE=6371e3, MU=Gc*ME, g0=9.80665, cL=299792458
 <script src="bank1b.js"></script>
 <script src="bank2.js"></script>
 <script src="bank2b.js"></script>
-<script>
-/* ---------- engine ---------- */
-const CATS=[["tut","Tutorial originals"],["var","Tutorial rewordings"],["con","Concepts & details"],["fig","Figures & models"],["calc","Calculations"],["trap","Traps & corrections"],["open","Open-ended"]];
-const view=document.getElementById("view");
-const store={get(k,d){try{const v=localStorage.getItem("em0508:"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("em0508:"+k,JSON.stringify(v))}catch(e){}}};
-let cfg=store.get("cfg",{topics:[1],cats:CATS.map(c=>c[0]),count:20,mode:"practice"});
-let run=null;
-const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
-const catOf=q=>{const s=new Set([q.c]);if(q.k==="open")s.add("open");if(q.img)s.add("fig");if(q.k==="gen")s.add("calc");return s};
-function pool(topics,cats){return QB.filter(q=>topics.includes(q.t)&&[...catOf(q)].some(c=>cats.includes(c)))}
-function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function instantiate(q){
-  if(q.k==="gen"){const r=q.fn();return Object.assign({t:q.t,c:q.c,src:q},r,{k:r.k||"num"})}
-  const o={...q,src:q};
-  if((q.k==="mcq"||q.k==="multi")&&!q.fixed&&!q.o.some(x=>/of the above|both|none of/i.test(x))){
-    const idx=shuffle(q.o.map((_,i)=>i));o.o=idx.map(i=>q.o[i]);
-    o.a=q.k==="multi"?q.a.map(a=>idx.indexOf(a)):idx.indexOf(q.a)}
-  if(o.k==="mcq"&&o.k!=="multi"&&typeof o.a==="number"&&o.o)o.k="mcq";
-  return o}
-function home(){
-  const best=store.get("best",{});
-  const counts=t=>QB.filter(q=>q.t===t).length;
-  view.innerHTML=`<section class="setup">
-  <div class="panel group"><div class="label">Chapters</div>
-    <div class="chips">${Object.entries(TOPICS).map(([n,name])=>`<button class="chip" data-t="${n}" aria-pressed="${cfg.topics.includes(+n)}"><b>Topic ${n}</b><span>${name}</span><small>${counts(+n)} questions${best[n]!=null?` · best ${best[n]}%`:""}</small></button>`).join("")}</div>
-    <div class="row" style="margin-top:10px"><button class="pill" id="allT">Select all chapters</button><button class="pill" id="noneT">Clear</button></div></div>
-  <div class="panel group"><div class="label">Question types</div>
-    <div class="row">${CATS.map(([k,l])=>`<button class="pill" data-c="${k}" aria-pressed="${cfg.cats.includes(k)}">${l}</button>`).join("")}</div>
-    <p class="hint" style="margin:8px 0 0">Calculations draw new numbers each run. Choosing only Calculations gives three versions of every calculation.</p></div>
-  <div class="panel group"><div class="label">Length & mode</div>
-    <div class="row">${[10,20,40,80,0].map(n=>`<button class="pill" data-n="${n}" aria-pressed="${cfg.count===n}">${n||"Everything"}</button>`).join("")}</div>
-    <div class="row" style="margin-top:10px">${[["practice","Practice · answer shown after each question"],["exam","Exam · answers shown at the end"]].map(([m,l])=>`<button class="pill" data-m="${m}" aria-pressed="${cfg.mode===m}">${l}</button>`).join("")}</div></div>
-  <div class="actions"><span class="count" id="avail"></span><button class="btn" id="go">Start quiz</button></div>
-  </section>`;
-  const upd=()=>{const n=pool(cfg.topics,cfg.cats).length;document.getElementById("avail").textContent=`${n} questions match`;document.getElementById("go").disabled=!n;store.set("cfg",cfg)};
-  view.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{const t=+b.dataset.t;cfg.topics=cfg.topics.includes(t)?cfg.topics.filter(x=>x!==t):[...cfg.topics,t];b.setAttribute("aria-pressed",cfg.topics.includes(t));upd()});
-  view.querySelector("#allT").onclick=()=>{cfg.topics=[1,2,3,4,5,6,7,8];home()};
-  view.querySelector("#noneT").onclick=()=>{cfg.topics=[];home()};
-  view.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{const c=b.dataset.c;cfg.cats=cfg.cats.includes(c)?cfg.cats.filter(x=>x!==c):[...cfg.cats,c];b.setAttribute("aria-pressed",cfg.cats.includes(c));upd()});
-  view.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{cfg.count=+b.dataset.n;view.querySelectorAll("[data-n]").forEach(x=>x.setAttribute("aria-pressed",x===b));upd()});
-  view.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{cfg.mode=b.dataset.m;view.querySelectorAll("[data-m]").forEach(x=>x.setAttribute("aria-pressed",x===b));upd()});
-  view.querySelector("#go").onclick=()=>start(pool(cfg.topics,cfg.cats));
-  upd();
-}
-function start(src,isRetry){
-  let list=shuffle(src);
-  if(!isRetry&&cfg.cats.length===1&&cfg.cats[0]==="calc")list=shuffle(list.flatMap(q=>q.k==="gen"?[q,q,q]:[q]));
-  if(!isRetry&&cfg.count)list=list.slice(0,cfg.count);
-  run={qs:list.map(instantiate),i:0,ans:[],mode:cfg.mode,srcs:list};
-  ask();window.scrollTo(0,0)
-}
-function tagHtml(q){const L={tut:"Tutorial",var:"Tutorial · reworded",con:"Concept",fig:"Figure",calc:"Calculation",trap:"Trap",open:"Open-ended"};
-  return `<div class="tags"><span class="tag">Topic ${q.t}</span><span class="tag ${q.c}">${L[q.c]||q.c}</span>${q.ref?`<span class="tag">${esc(q.ref)}</span>`:""}</div>`}
-function figHtml(q){if(!q.img)return"";const [src,cap]=Array.isArray(q.img)?q.img:[q.img,""];return `<figure><img src="img/${src}" alt="${esc(cap||"Course figure")}" loading="lazy">${cap?`<figcaption>${esc(cap)}</figcaption>`:""}</figure>`}
-function ask(){
-  const q=run.qs[run.i], n=run.qs.length;
-  let body="";
-  if(q.k==="mcq"||q.k==="tf"||q.k==="multi"){
-    body=`<div class="opts">${q.o.map((o,i)=>`<button class="opt" data-i="${i}" aria-pressed="false"><span class="k">${q.k==="tf"?"":String.fromCharCode(65+i)}</span><span>${o}</span></button>`).join("")}</div>${q.k==="multi"?`<p class="hint" style="margin:0">Select every correct option, then check.</p>`:""}`;
-  }else if(q.k==="num"){
-    body=`<div class="numrow"><input id="num" inputmode="decimal" autocomplete="off" placeholder="Your answer"><span class="count">${esc(q.unit||"")}</span></div><p class="hint" style="margin:0">Accepted within ±${Math.round((q.tol||0.02)*100)}%. Scientific notation like 7.66e3 works.</p>`;
-  }else if(q.k==="open"){
-    body=`<textarea id="ta" placeholder="Write your answer, then compare it with the model answer."></textarea>`;
-  }
-  const needsCheck=q.k==="multi"||q.k==="num"||q.k==="open";
-  view.innerHTML=`<div class="bar"><div class="meta"><span>Question ${run.i+1} / ${n}</span><span>${run.ans.filter(a=>a&&a.ok).length} correct · ${run.mode}</span></div><div class="track"><div class="fill" style="width:${run.i/n*100}%"></div></div></div>
-  <article class="panel qcard">${tagHtml(q)}<div class="qtext">${q.q}</div>${figHtml(q)}${body}<div id="fb"></div>
-  <div class="actions"><button class="btn ghost" id="quit">End quiz</button><span class="row">${needsCheck?`<button class="btn" id="check">${q.k==="open"?"Show model answer":"Check"}</button>`:""}<button class="btn" id="next" hidden>${run.i+1<n?"Next question":"See results"}</button></span></div></article>`;
-  const sel=new Set();
-  view.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;
-    if(q.k==="multi"){sel.has(i)?sel.delete(i):sel.add(i);b.setAttribute("aria-pressed",sel.has(i))}
-    else grade(q,i)});
-  const chk=view.querySelector("#check");
-  if(chk)chk.onclick=()=>{
-    if(q.k==="multi")grade(q,[...sel]);
-    else if(q.k==="num"){const v=parseFloat(String(document.getElementById("num").value).replace(/,/g,"").replace(/×10\^/,"e"));if(isNaN(v))return;grade(q,v)}
-    else if(q.k==="open")showOpen(q)};
-  const ni=document.getElementById("num");if(ni){ni.focus();ni.onkeydown=e=>{if(e.key==="Enter")chk.click()}}
-  view.querySelector("#next").onclick=()=>{run.i++;run.i<n?ask():results();window.scrollTo(0,0)};
-  view.querySelector("#quit").onclick=()=>{run.qs=run.qs.slice(0,run.i+(run.ans[run.i]?1:0));results()};
-  view.querySelectorAll("figure img").forEach(im=>im.onclick=()=>{document.getElementById("lbimg").src=im.src;document.getElementById("lb").hidden=false});
-}
-document.getElementById("lb").onclick=()=>document.getElementById("lb").hidden=true;
-document.addEventListener("keydown",e=>{
-  if(!run||e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT")return;
-  const nx=document.getElementById("next");
-  if(e.key==="Enter"&&nx&&!nx.hidden){nx.click();return}
-  const k=e.key.toUpperCase(), i=k.charCodeAt(0)-65;
-  if(/^[A-F]$/.test(k)||/^[1-6]$/.test(e.key)){const idx=/^[1-6]$/.test(e.key)?+e.key-1:i;const b=view.querySelector(`.opt[data-i="${idx}"]`);if(b&&!b.disabled)b.click()}
-});
-function fmtAns(q,a){if(q.k==="num")return `${sig(a,4)} ${q.unit||""}`;if(Array.isArray(a))return a.map(i=>q.o[i]).join(" · ")||"(nothing selected)";return q.o[a]}
-function grade(q,a){
-  let ok;
-  if(q.k==="num"){const tol=q.tol||0.02;ok=Math.abs(a-q.a)<=Math.abs(q.a)*tol+(q.abs||0)}
-  else if(q.k==="multi"){ok=a.length===q.a.length&&a.every(x=>q.a.includes(x))}
-  else ok=a===q.a;
-  run.ans[run.i]={ok,user:a};
-  view.querySelectorAll(".opt").forEach(b=>{b.disabled=true;const i=+b.dataset.i;
-    if(run.mode==="practice"){const right=q.k==="multi"?q.a.includes(i):i===q.a;const picked=Array.isArray(a)?a.includes(i):i===a;if(right)b.classList.add("right");else if(picked)b.classList.add("wrong")}
-    else{const picked=Array.isArray(a)?a.includes(i):i===a;b.setAttribute("aria-pressed",picked)}});
-  const c=document.getElementById("check");if(c)c.hidden=true;const ni=document.getElementById("num");if(ni)ni.disabled=true;
-  if(run.mode==="practice")document.getElementById("fb").innerHTML=feedback(q,ok);
-  else document.getElementById("fb").innerHTML=`<p class="hint">Answer recorded.</p>`;
-  const nx=document.getElementById("next");nx.hidden=false;nx.focus();
-}
-function feedback(q,ok){
-  const corr=q.k==="num"?`<p><b>Answer:</b> ${sig(q.a,4)} ${esc(q.unit||"")}</p>`:(ok?"":`<p><b>Correct:</b> ${fmtAns(q,q.a)}</p>`);
-  return `<div class="verdict ${ok?"ok":"bad"}">${ok?"Correct":"Not quite"}</div><div class="exp">${corr}${q.e?`<div>${q.e}</div>`:""}</div>`}
-function showOpen(q){
-  document.getElementById("check").hidden=true;
-  document.getElementById("fb").innerHTML=`<div class="exp"><p><b>Model answer</b></p>${q.e}</div><p class="hint">Mark yourself honestly against the model answer.</p><div class="row"><button class="btn" id="got">I covered the key points</button><button class="btn ghost" id="miss">I missed key points</button></div>`;
-  const done=ok=>{run.ans[run.i]={ok,user:document.getElementById("ta").value||"(blank)"};document.getElementById("got").disabled=document.getElementById("miss").disabled=true;const nx=document.getElementById("next");nx.hidden=false;nx.focus()};
-  document.getElementById("got").onclick=()=>done(true);document.getElementById("miss").onclick=()=>done(false);
-}
-function results(){
-  const qs=run.qs, ans=run.ans, n=qs.length, ok=ans.filter(a=>a&&a.ok).length, pct=n?Math.round(ok/n*100):0;
-  const best=store.get("best",{});const byT={};
-  qs.forEach((q,i)=>{byT[q.t]=byT[q.t]||{n:0,ok:0};byT[q.t].n++;if(ans[i]&&ans[i].ok)byT[q.t].ok++});
-  Object.entries(byT).forEach(([t,v])=>{if(v.n>=5){const p=Math.round(v.ok/v.n*100);if(best[t]==null||p>best[t])best[t]=p}});store.set("best",best);
-  const missed=qs.map((q,i)=>({q,a:ans[i],i})).filter(x=>!x.a||!x.a.ok);
-  view.innerHTML=`<section class="panel" style="display:flex;flex-direction:column;gap:16px">
-    <div class="eyebrow">Debrief</div><div class="row" style="gap:18px;align-items:baseline"><span class="score">${pct}%</span><span class="count">${ok} of ${n} correct</span></div>
-    <div class="breakdown">${Object.entries(byT).sort().map(([t,v])=>`<div class="bd"><b>Topic ${t}</b>${v.ok}/${v.n} · ${Math.round(v.ok/v.n*100)}%</div>`).join("")}</div>
-    <div class="actions"><button class="btn ghost" id="home">Change setup</button><span class="row">${missed.length?`<button class="btn ghost" id="retry">Retry the ${missed.length} missed</button>`:""}<button class="btn" id="again">New run, same setup</button></span></div></section>
-    ${missed.length?`<section class="review"><h2>Review what you missed</h2>${missed.map(({q,a})=>`<div class="ritem">${tagHtml(q)}<div class="qtext">${q.q}</div>${figHtml(q)}
-      ${q.k==="open"?"":`<div class="ua">Your answer: ${a?esc(fmtAns(q,a.user)):"(not answered)"}</div><div class="ca">Correct: ${esc(q.k==="num"?sig(q.a,4)+" "+(q.unit||""):fmtAns(q,q.a))}</div>`}
-      <div class="exp">${q.e||""}</div></div>`).join("")}</section>`:""}`;
-  view.querySelector("#home").onclick=()=>{run=null;home()};
-  view.querySelector("#again").onclick=()=>start(pool(cfg.topics,cfg.cats));
-  const r=view.querySelector("#retry");if(r)r.onclick=()=>{run.mode=cfg.mode;start(missed.map(x=>x.q.src),true)};
-  view.querySelectorAll("figure img").forEach(im=>im.onclick=()=>{document.getElementById("lbimg").src=im.src;document.getElementById("lb").hidden=false});
-  window.scrollTo(0,0);
-}
-home();
-</script>
+<script src="engine.js"></script>
 </body>
 </html>

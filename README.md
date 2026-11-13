@@ -13,12 +13,19 @@ Open `index.html` in a browser (or enable GitHub Pages on this repo).
 - Trap questions where the course text and real physics disagree, with explanations
 - Open-ended tutorial questions with model answers (self-marked)
 
-Modes: practice (feedback after each question) or exam (feedback at the end), filter by topic and question type, retry missed questions.
+## Using it
+- **Select topics**: tick any of Topics 1–8, or use the one-click Topic buttons under Quick start
+- **Quick start presets**: all tutorial questions, calculation drill, figures, traps, 40-question mock exam
+- **Modes**: practice (answer shown after each question) or exam (answers shown at the end, changeable until you finish)
+- **During a quiz**: Previous / Next / Skip, a numbered question map to jump anywhere, Finish now (warns about unanswered), Restart, Exit to menu (progress is saved; Resume from the menu)
+- **Results**: score per topic, retry missed, redo the same quiz, redo with new calculation numbers, new random set, review missed or all questions
+- Keyboard: A–F or 1–6 to answer, ← / → to move between questions
 
 ## Files
 | File | Contents |
 |---|---|
-| `index.html` | Page, styles and quiz engine |
+| `index.html` | Page and styles |
+| `engine.js` | Quiz engine: menu, navigation, scoring, results |
 | `bank1.js` | Topics 1–2 |
 | `bank1b.js` | Topics 3–4 |
 | `bank2.js` | Topics 5–6 |
