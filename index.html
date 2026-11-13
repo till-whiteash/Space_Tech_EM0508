@@ -1,6 +1,7 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
+<script>try{var t=localStorage.getItem("em0508:theme");if(t==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>EM0508 Spacecraft Quiz</title>
@@ -157,12 +158,15 @@ textarea{font-size:1rem;min-height:140px}
 .hint{font-size:.85rem;color:var(--muted)}
 .lightbox{background:rgba(5,10,20,.9)}
 @media (max-width:520px){.qcard{padding:18px}.qtext{font-size:1.1rem}.panel{padding:16px}figure img{max-height:300px}}
+.themebtn{align-self:flex-end;margin-bottom:-28px}
+@media (max-width:520px){.themebtn{margin-bottom:0}}
 </style>
 </head>
 <body>
 
 <div class="wrap" id="app">
   <header>
+    <button class="pill themebtn" id="themeBtn" type="button">Dark mode</button>
     <div class="eyebrow">EM0508 · Space Technology · Topics 1–8</div>
     <h1>Spacecraft Systems Quiz</h1>
     <p class="lede">Every tutorial question, reworded and inverted versions of each, concept checks from the notes and slides, figure questions using the course diagrams, calculations with fresh numbers on every run, and trap questions where the course material and real physics disagree.</p>
@@ -183,10 +187,11 @@ const rnd=(a,b)=>a+Math.random()*(b-a), ri=(a,b)=>Math.floor(rnd(a,b+1)), pick=a
 function sig(x,n=3){if(!isFinite(x))return String(x);if(x===0)return"0";const p=Math.floor(Math.log10(Math.abs(x)));if(Math.abs(p)>=6)return x.toExponential(n-1).replace("e","×10^").replace("+","");const d=Math.max(0,n-1-p);return Number(x.toFixed(Math.min(d,8))).toLocaleString("en-US",{maximumFractionDigits:Math.min(d,8)})}
 const Gc=6.67430e-11, ME=5.972e24, RE=6371e3, MU=Gc*ME, g0=9.80665, cL=299792458;
 </script>
-<script src="bank1.js"></script>
-<script src="bank1b.js"></script>
-<script src="bank2.js"></script>
-<script src="bank2b.js"></script>
-<script src="engine.js"></script>
+<script src="bank1.js?v=3"></script>
+<script src="bank1b.js?v=3"></script>
+<script src="bank2.js?v=3"></script>
+<script src="bank2b.js?v=3"></script>
+<script src="engine.js?v=3"></script>
+<script>(function(){var b=document.getElementById("themeBtn"),r=document.documentElement;function sync(){b.textContent=r.getAttribute("data-theme")==="dark"?"Light mode":"Dark mode"}sync();b.onclick=function(){var d=r.getAttribute("data-theme")==="dark"?"light":"dark";r.setAttribute("data-theme",d);try{localStorage.setItem("em0508:theme",d)}catch(e){}sync()}})();</script>
 </body>
 </html>
